@@ -16,7 +16,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-            - name: Update README
+      - name: Update README
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -31,10 +31,8 @@ jobs:
           lines.append("This repository contains my Java programming practice and problem-solving exercises.")
           lines.append("")
 
-          # Find all Java files
           java_files = list(src.rglob("*.java"))
 
-          # Separate files inside folders from files directly inside src
           assignment_dirs = sorted(
               [p for p in src.iterdir() if p.is_dir()],
               key=lambda p: p.name
@@ -49,7 +47,7 @@ jobs:
           lines.append("")
           lines.append(f"**Total Java Programs: {len(java_files)}**")
           lines.append("")
-          
+
           lines.append("## 📚 Assignment Sets")
           lines.append("")
 
@@ -83,6 +81,7 @@ jobs:
 
           readme.write_text("\n".join(lines), encoding="utf-8")
           PY
+
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
