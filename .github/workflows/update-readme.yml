@@ -1,0 +1,91 @@
+name: Update README
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update README
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          src = Path("src")
+          readme = Path("README.md")
+
+          lines = []
+
+          lines.append("# Java Practice 🚀")
+          lines.append("")
+          lines.append("This repository contains my Java programming practice and problem-solving exercises.")
+          lines.append("")
+
+          java_files = list(src.rglob("*.java"))
+
+          assignment_dirs = sorted(
+              [p for p in src.iterdir() if p.is_dir()],
+              key=lambda p: p.name
+          )
+
+          root_files = sorted(
+              [p for p in src.glob("*.java")],
+              key=lambda p: p.name
+          )
+
+          lines.append("## 📊 Progress")
+          lines.append("")
+          lines.append(f"**Total Java Programs: {len(java_files)}**")
+          lines.append("")
+
+          lines.append("## 📚 Assignment Sets")
+          lines.append("")
+
+          for folder in assignment_dirs:
+              files = sorted(folder.glob("*.java"), key=lambda p: p.name)
+
+              lines.append(f"### {folder.name}")
+              lines.append("")
+              lines.append(f"**{len(files)} programs**")
+              lines.append("")
+
+              for file in files:
+                  relative_path = file.as_posix()
+                  lines.append(f"- [{file.name}]({relative_path})")
+
+              lines.append("")
+
+          if root_files:
+              lines.append("### Other Programs")
+              lines.append("")
+
+              for file in root_files:
+                  relative_path = file.as_posix()
+                  lines.append(f"- [{file.name}]({relative_path})")
+
+              lines.append("")
+
+          lines.append("---")
+          lines.append("")
+          lines.append("⭐ This README is automatically updated using GitHub Actions.")
+
+          readme.write_text("\n".join(lines), encoding="utf-8")
+          PY
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git diff --cached --quiet || git commit -m "Update README automatically"
+          git push
