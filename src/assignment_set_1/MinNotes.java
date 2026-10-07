@@ -9,8 +9,8 @@ public class MinNotes {
         int note5 = sc.nextInt();
         int amount = sc.nextInt();
         int total = note1 + 5*note5;
-        int note1_req = 0;
-        int note5_req = 0;
+        int note1_req;
+        int note5_req;
 
         if(total < amount){
             System.out.println(-1);
